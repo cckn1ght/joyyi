@@ -2,10 +2,10 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "openzeppelin-contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "openzeppelin-contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "openzeppelin-contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 
 import "../interfaces/beefy/IStrategyV7.sol";
 
@@ -15,7 +15,7 @@ import "../interfaces/beefy/IStrategyV7.sol";
  * The yield optimizing strategy itself is implemented in a separate 'Strategy.sol' contract.
  */
 contract BeefyVaultV7 is ERC20Upgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
-    using SafeERC20Upgradeable for IERC20Upgradeable;
+    using SafeERC20 for IERC20;
 
     struct StratCandidate {
         address implementation;
@@ -55,8 +55,8 @@ contract BeefyVaultV7 is ERC20Upgradeable, OwnableUpgradeable, ReentrancyGuardUp
         approvalDelay = _approvalDelay;
     }
 
-    function want() public view returns (IERC20Upgradeable) {
-        return IERC20Upgradeable(strategy.want());
+    function want() public view returns (IERC20) {
+        return IERC20(strategy.want());
     }
 
     /**
@@ -196,7 +196,7 @@ contract BeefyVaultV7 is ERC20Upgradeable, OwnableUpgradeable, ReentrancyGuardUp
     function inCaseTokensGetStuck(address _token) external onlyOwner {
         require(_token != address(want()), "!token");
 
-        uint256 amount = IERC20Upgradeable(_token).balanceOf(address(this));
-        IERC20Upgradeable(_token).safeTransfer(msg.sender, amount);
+        uint256 amount = IERC20(_token).balanceOf(address(this));
+        IERC20(_token).safeTransfer(msg.sender, amount);
     }
 }
