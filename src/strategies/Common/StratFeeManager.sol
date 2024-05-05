@@ -2,8 +2,8 @@
 
 pragma solidity ^0.8.0;
 
-import "openzeppelin/contracts/access/Ownable.sol";
-import "openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "../../interfaces/common/IFeeConfig.sol";
 
 contract StratFeeManager is Ownable, Pausable {
@@ -41,7 +41,7 @@ contract StratFeeManager is Ownable, Pausable {
 
     constructor(
         CommonAddresses memory _commonAddresses
-    ) {
+    ) Ownable(msg.sender) {
         vault = _commonAddresses.vault;
         unirouter = _commonAddresses.unirouter;
         keeper = _commonAddresses.keeper;
