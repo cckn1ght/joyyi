@@ -2,21 +2,18 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-
+import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 
 import "../../interfaces/common/IMasterChef.sol";
 import "../../interfaces/stargate/IStargateRouter.sol";
-import "../Common/StratFeeManager.sol";
-import "../../utils/BalancerUtils.sol";
+import "../Common/StratFeeManagerInitializable.sol";
+import "../../utils/UniswapV3Utils.sol";
 import "../../utils/StringUtils.sol";
-import "../../utils/GasFeeThrottler.sol";
 
-contract StrategyStargateArb is StratFeeManager, GasFeeThrottler {
+contract StrategyStargateArb is UUPSUpgradeable, StratFeeManagerInitializable {
     using SafeERC20 for IERC20;
-    using BalancerUtils for IBalancerVault;
 
     // Tokens used
     address public native;
@@ -34,38 +31,40 @@ contract StrategyStargateArb is StratFeeManager, GasFeeThrottler {
     uint256 public lastHarvest;
     string public pendingRewardsFunctionName;
 
-    BalancerUtils.BatchSwapInfo public outputToNativePath;
-    BalancerUtils.BatchSwapInfo public outputToDepositPath;
+    bytes public outputToNativePath;
+    bytes public outputToDepositPath;
 
     event StratHarvest(address indexed harvester, uint256 wantHarvested, uint256 tvl);
     event Deposit(uint256 tvl);
     event Withdraw(uint256 tvl);
     event ChargedFees(uint256 callFees, uint256 beefyFees, uint256 strategistFees);
 
-    constructor(
+    function initialize(
         address _want,
         uint256 _poolId,
         address _chef,
         address _stargateRouter,
         uint256 _routerPoolId,
-        CommonAddresses memory _commonAddresses,
-        bytes32[] memory _outputToNativePools,
-        bytes32[] memory _outputToDepositPools,
-        address[] memory _outputToNativeRoute,
-        address[] memory _outputToDepositRoute
-    ) StratFeeManager(_commonAddresses) {
+        bytes memory _outputToNativePath,
+        bytes memory _outputToDepositPath,
+        CommonAddresses calldata _commonAddresses
+    ) external initializer {
+        __StratFeeManager_init(_commonAddresses);
         want = _want;
         poolId = _poolId;
         chef = _chef;
         stargateRouter = _stargateRouter;
         routerPoolId = _routerPoolId;
 
-        output = _outputToNativeRoute[0];
-        native = _outputToNativeRoute[_outputToNativeRoute.length - 1];
-        depositToken = _outputToDepositRoute[_outputToDepositRoute.length - 1];
+        address[] memory outputToNativeRoute = UniswapV3Utils.pathToRoute(_outputToNativePath);
+        address[] memory outputToDepositRoute = UniswapV3Utils.pathToRoute(_outputToDepositPath);
 
-        BalancerUtils.assignBatchSwapInfo(outputToNativePath, _outputToNativePools, _outputToNativeRoute);
-        BalancerUtils.assignBatchSwapInfo(outputToDepositPath, _outputToDepositPools, _outputToDepositRoute);
+        output = outputToNativeRoute[0];
+        native = outputToNativeRoute[outputToNativeRoute.length - 1];
+        depositToken = outputToDepositRoute[outputToDepositRoute.length - 1];
+
+        outputToNativePath = _outputToNativePath;
+        outputToDepositPath = _outputToDepositPath;
 
         _giveAllowances();
     }
@@ -111,11 +110,11 @@ contract StrategyStargateArb is StratFeeManager, GasFeeThrottler {
         }
     }
 
-    function harvest() external gasThrottle virtual {
+    function harvest() external virtual {
         _harvest(tx.origin);
     }
 
-    function harvest(address callFeeRecipient) external gasThrottle virtual {
+    function harvest(address callFeeRecipient) external virtual {
         _harvest(callFeeRecipient);
     }
 
@@ -142,7 +141,7 @@ contract StrategyStargateArb is StratFeeManager, GasFeeThrottler {
     function chargeFees(address callFeeRecipient) internal {
         IFeeConfig.FeeCategory memory fees = getFees();
         uint256 toNative = IERC20(output).balanceOf(address(this)) * fees.total / DIVISOR;
-        IBalancerVault(unirouter).swap(outputToNativePath, toNative);
+        UniswapV3Utils.swap(unirouter, outputToNativePath, toNative);
 
         uint256 nativeFeeBal = IERC20(native).balanceOf(address(this));
 
@@ -161,7 +160,7 @@ contract StrategyStargateArb is StratFeeManager, GasFeeThrottler {
     // Adds liquidity to AMM and gets more LP tokens.
     function addLiquidity() internal {
         uint256 toDeposit = IERC20(output).balanceOf(address(this));
-        IBalancerVault(unirouter).swap(outputToDepositPath, toDeposit);
+        UniswapV3Utils.swap(unirouter, outputToDepositPath, toDeposit);
 
         uint256 depositBal = IERC20(depositToken).balanceOf(address(this));
         IStargateRouter(stargateRouter).addLiquidity(routerPoolId, depositBal, address(this));
@@ -202,19 +201,8 @@ contract StrategyStargateArb is StratFeeManager, GasFeeThrottler {
     }
 
     // native reward amount for calling harvest
-    function callReward() public view returns (uint256) {
-        IFeeConfig.FeeCategory memory fees = getFees();
-        uint256 outputBal = rewardsAvailable();
-        uint256 nativeOut;
-        if (outputBal > 0) {
-            uint256[] memory amountsOut = IBalancerVault(unirouter).getAmountsOut(
-                outputToNativePath,
-                outputBal
-            );
-            nativeOut = amountsOut[amountsOut.length - 1];
-        }
-
-        return nativeOut * fees.total / DIVISOR * fees.call / DIVISOR;
+    function callReward() external pure returns (uint256) {
+        return 0;
     }
 
     function setHarvestOnDeposit(bool _harvestOnDeposit) external onlyManager {
@@ -225,10 +213,6 @@ contract StrategyStargateArb is StratFeeManager, GasFeeThrottler {
         } else {
             setWithdrawalFee(10);
         }
-    }
-
-    function setShouldGasThrottle(bool _shouldGasThrottle) external onlyManager {
-        shouldGasThrottle = _shouldGasThrottle;
     }
 
     // called as part of strat migration. Sends all the available funds back to the vault.
@@ -274,10 +258,11 @@ contract StrategyStargateArb is StratFeeManager, GasFeeThrottler {
     }
 
     function outputToNative() external view returns (address[] memory) {
-        return outputToNativePath.route;
+        return UniswapV3Utils.pathToRoute(outputToNativePath);
     }
 
     function outputToDeposit() external view returns (address[] memory) {
-        return outputToDepositPath.route;
+        return UniswapV3Utils.pathToRoute(outputToDepositPath);
     }
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 }

@@ -4,16 +4,17 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 
+import "../Common/StratFeeManagerInitializable.sol";
 
 import "../../interfaces/aave/IDataProvider.sol";
 import "../../interfaces/aave/IAaveV3Incentives.sol";
 import "../../interfaces/aave/ILendingPool.sol";
-import "../../interfaces/common/ISolidlyRouter.sol";
 import "../Common/StratFeeManager.sol";
-import "../../utils/GasFeeThrottler.sol";
+import "../../utils/UniswapV3Utils.sol";
 
-contract StrategyAaveArbUSDC is StratFeeManager, GasFeeThrottler {
+contract StrategyAaveArbUSDC is UUPSUpgradeable, StratFeeManagerInitializable {
     using SafeERC20 for IERC20;
 
     // Tokens used
@@ -27,9 +28,9 @@ contract StrategyAaveArbUSDC is StratFeeManager, GasFeeThrottler {
     address public lendingPool;
     address public incentivesController;
 
-    // Routes
-    ISolidlyRouter.Routes[] public outputToNativeRoute;
-    ISolidlyRouter.Routes[] public nativeToWantRoute;
+    // Paths
+    bytes public outputToNativePath;
+    bytes public nativeToWantPath;
 
     bool public harvestOnDeposit;
     uint256 public lastHarvest;
@@ -39,26 +40,23 @@ contract StrategyAaveArbUSDC is StratFeeManager, GasFeeThrottler {
     event Withdraw(uint256 tvl);
     event ChargedFees(uint256 callFees, uint256 beefyFees, uint256 strategistFees);
 
-    constructor(
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+
+    function initialize(
         address _dataProvider,
         address _lendingPool,
         address _incentivesController,
-        CommonAddresses memory _commonAddresses,
-        ISolidlyRouter.Routes[] memory _nativeToWantRoute,
-        ISolidlyRouter.Routes[] memory _outputToNativeRoute
-    ) StratFeeManager(_commonAddresses) {
+        CommonAddresses calldata _commonAddresses,
+        bytes memory _outputToNativePath,
+        bytes memory _nativeToWantPath
+    ) external initializer {
+        __StratFeeManager_init(_commonAddresses);
 
-        for (uint i; i < _nativeToWantRoute.length; ++i) {
-            nativeToWantRoute.push(_nativeToWantRoute[i]);
-        }
-
-        for (uint i; i < _outputToNativeRoute.length; ++i) {
-            outputToNativeRoute.push(_outputToNativeRoute[i]);
-        }
-
-        native = nativeToWantRoute[0].from;
-        want = nativeToWantRoute[nativeToWantRoute.length - 1].to;
-        output = outputToNativeRoute[0].from;
+        address[] memory outputToNativeRoute = UniswapV3Utils.pathToRoute(_outputToNativePath);
+        address[] memory nativeToWantRoute = UniswapV3Utils.pathToRoute(_nativeToWantPath);
+        native = nativeToWantRoute[0];
+        want = nativeToWantRoute[nativeToWantRoute.length - 1];
+        output = outputToNativeRoute[0];
 
         dataProvider = _dataProvider;
         lendingPool = _lendingPool;
@@ -66,6 +64,9 @@ contract StrategyAaveArbUSDC is StratFeeManager, GasFeeThrottler {
 
         (aToken,,) = IDataProvider(dataProvider).getReserveTokensAddresses(want);
 
+        outputToNativePath = _outputToNativePath;
+        nativeToWantPath = _nativeToWantPath;
+        withdrawalFee = 0;
         _giveAllowances();
     }
 
@@ -121,7 +122,7 @@ contract StrategyAaveArbUSDC is StratFeeManager, GasFeeThrottler {
     }
 
     // compounds earnings and charges performance fee
-    function _harvest(address callFeeRecipient) internal whenNotPaused gasThrottle {
+    function _harvest(address callFeeRecipient) internal whenNotPaused {
         address[] memory assets = new address[](1);
         assets[0] = aToken;
         IAaveV3Incentives(incentivesController).claimRewards(assets, type(uint).max, address(this), output);
@@ -143,7 +144,7 @@ contract StrategyAaveArbUSDC is StratFeeManager, GasFeeThrottler {
         IFeeConfig.FeeCategory memory fees = getFees();
         uint256 toNative = IERC20(output).balanceOf(address(this));
         if (output != native) {
-            ISolidlyRouter(unirouter).swapExactTokensForTokens(toNative, 0, outputToNativeRoute, address(this), block.timestamp);
+            UniswapV3Utils.swap(unirouter, outputToNativePath, toNative);
         }
 
         uint256 stratFees = IERC20(native).balanceOf(address(this)) * fees.total / DIVISOR;
@@ -163,8 +164,8 @@ contract StrategyAaveArbUSDC is StratFeeManager, GasFeeThrottler {
     // swap rewards to {want}
     function swapRewards() internal {
         uint256 nativeBal = IERC20(native).balanceOf(address(this));
-        if (want != native) {
-            ISolidlyRouter(unirouter).swapExactTokensForTokens(nativeBal, 0, nativeToWantRoute, address(this), block.timestamp);
+        if (nativeBal > 0 && want != native) {
+            UniswapV3Utils.swap(unirouter, nativeToWantPath, nativeBal);
         }
     }
 
@@ -210,17 +211,17 @@ contract StrategyAaveArbUSDC is StratFeeManager, GasFeeThrottler {
     }
 
     // native reward amount for calling harvest
-    function callReward() public view returns (uint256) {
-        IFeeConfig.FeeCategory memory fees = getFees();
-        uint256 outputBal = rewardsAvailable();
-        uint256 nativeOut;
-        if (outputBal > 0) {
-            (nativeOut,) = ISolidlyRouter(unirouter).getAmountOut(outputBal, output, native);
-        }
-
-        return nativeOut * fees.total / DIVISOR * fees.call / DIVISOR;
-    }
-
+//    function callReward() public view returns (uint256) {
+//        IFeeConfig.FeeCategory memory fees = getFees();
+//        uint256 outputBal = rewardsAvailable();
+//        uint256 nativeOut;
+//        if (outputBal > 0) {
+//            UniswapV3Utils.swap(unirouter, outputToNativePath, outputBal);
+//        }
+//
+//        return nativeOut * fees.total / DIVISOR * fees.call / DIVISOR;
+//    }
+//
     function setHarvestOnDeposit(bool _harvestOnDeposit) external onlyManager {
         harvestOnDeposit = _harvestOnDeposit;
         if (harvestOnDeposit) {

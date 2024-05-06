@@ -10,5 +10,9 @@ contract TestToken is ERC20 {
         string memory _symbol
     ) ERC20(_name, _symbol) {
         _mint(msg.sender, _initialSupply);
-    }  
+    }
+
+    function mint(uint256 value) external {
+        _mint(msg.sender, value);
+    }
 }

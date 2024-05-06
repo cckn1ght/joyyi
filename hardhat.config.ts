@@ -19,6 +19,15 @@ const config: HardhatUserConfig = {
                     },
                 },
             },
+            {
+                version: "0.4.18",
+                settings: {
+                    optimizer: {
+                        enabled: true,
+                        runs: 200,
+                    },
+                },
+            },
         ],
     },
     networks: {
@@ -30,6 +39,11 @@ const config: HardhatUserConfig = {
             chainId: 42161,
             accounts,
         },
+        "arbitrum-sepolia": {
+            url: process.env.ARB_SEPOLIA_RPC || "https://endpoints.omniatech.io/v1/arbitrum/sepolia/public",
+            chainId: 421614,
+            accounts,
+        },
     },
     paths: {
         sources: "./src",
@@ -38,7 +52,8 @@ const config: HardhatUserConfig = {
         // Your API key for Etherscan
         // Obtain one at https://etherscan.io/
         apiKey: {
-            arbitrumOne: process.env.ARB_API_KEY!,
+            arbitrumOne: process.env.ARB_API_KEY ?? '',
+            arbitrumSepolia: process.env.ARB_API_KEY ?? '',
         },
     }
 };

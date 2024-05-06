@@ -40,6 +40,16 @@
       "address": "0x1c8eDe544173d3a898409A653dd8268E5d4c3d92",
       "txHash": "0xb0ac47b0f92c2de0642d8514b939ac5d6515410ec32050929cfbf6efcf18370a",
       "kind": "uups"
+    },
+    {
+      "address": "0x12D98C792C62d1b8b919Eb7B1742cd763773421e",
+      "txHash": "0xdebb152bd2883e1a3d0819262b0450679087b0c26b4ebc0fe93c148a7974767e",
+      "kind": "uups"
+    },
+    {
+      "address": "0xDccBEda33F6975A3996D7624147538b5D227ABDb",
+      "txHash": "0x473c9d8d2773b499f1dd2b220e51c11471f3f9d086b8ff8d2927a29df8d830b1",
+      "kind": "uups"
     }
   ],
   "impls": {
@@ -438,6 +448,528 @@
               "src": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:45",
               "offset": 0,
               "slot": "4"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "7e9325f1a48cec1269d13e8a9a6d5e8f8d8514fa457c2a74782a72c47a1fb920": {
+      "address": "0x11215257A06cA8b50bdb912B5619f1A4D3F686B2",
+      "txHash": "0x640047fc88a4dc214c00e70d3b9421156b615714e7154ceae89262938e52136c",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "vault",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "StratFeeManagerInitializable",
+            "src": "src/strategies/Common/StratFeeManagerInitializable.sol:21"
+          },
+          {
+            "label": "unirouter",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address",
+            "contract": "StratFeeManagerInitializable",
+            "src": "src/strategies/Common/StratFeeManagerInitializable.sol:22"
+          },
+          {
+            "label": "keeper",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_address",
+            "contract": "StratFeeManagerInitializable",
+            "src": "src/strategies/Common/StratFeeManagerInitializable.sol:23"
+          },
+          {
+            "label": "strategist",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_address",
+            "contract": "StratFeeManagerInitializable",
+            "src": "src/strategies/Common/StratFeeManagerInitializable.sol:24"
+          },
+          {
+            "label": "beefyFeeRecipient",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_address",
+            "contract": "StratFeeManagerInitializable",
+            "src": "src/strategies/Common/StratFeeManagerInitializable.sol:25"
+          },
+          {
+            "label": "beefyFeeConfig",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_contract(IFeeConfig)3118",
+            "contract": "StratFeeManagerInitializable",
+            "src": "src/strategies/Common/StratFeeManagerInitializable.sol:26"
+          },
+          {
+            "label": "withdrawalFee",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256",
+            "contract": "StratFeeManagerInitializable",
+            "src": "src/strategies/Common/StratFeeManagerInitializable.sol:31"
+          },
+          {
+            "label": "native",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_address",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:22"
+          },
+          {
+            "label": "output",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_address",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:23"
+          },
+          {
+            "label": "want",
+            "offset": 0,
+            "slot": "9",
+            "type": "t_address",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:24"
+          },
+          {
+            "label": "aToken",
+            "offset": 0,
+            "slot": "10",
+            "type": "t_address",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:25"
+          },
+          {
+            "label": "dataProvider",
+            "offset": 0,
+            "slot": "11",
+            "type": "t_address",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:28"
+          },
+          {
+            "label": "lendingPool",
+            "offset": 0,
+            "slot": "12",
+            "type": "t_address",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:29"
+          },
+          {
+            "label": "incentivesController",
+            "offset": 0,
+            "slot": "13",
+            "type": "t_address",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:30"
+          },
+          {
+            "label": "outputToNativePath",
+            "offset": 0,
+            "slot": "14",
+            "type": "t_bytes_storage",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:33"
+          },
+          {
+            "label": "nativeToWantPath",
+            "offset": 0,
+            "slot": "15",
+            "type": "t_bytes_storage",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:34"
+          },
+          {
+            "label": "harvestOnDeposit",
+            "offset": 0,
+            "slot": "16",
+            "type": "t_bool",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:36"
+          },
+          {
+            "label": "lastHarvest",
+            "offset": 0,
+            "slot": "17",
+            "type": "t_uint256",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:37"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)65_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)14_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(PausableStorage)138_storage": {
+            "label": "struct PausableUpgradeable.PausableStorage",
+            "members": [
+              {
+                "label": "_paused",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_bytes_storage": {
+            "label": "bytes",
+            "numberOfBytes": "32"
+          },
+          "t_contract(IFeeConfig)3118": {
+            "label": "contract IFeeConfig",
+            "numberOfBytes": "20"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Pausable": [
+            {
+              "contract": "PausableUpgradeable",
+              "label": "_paused",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol:21",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "21d50c8f61c952b5e7eff02f27c8c163c1688a67c2660f6d6c01389f0b34707f": {
+      "address": "0x3e212F515B6fbf025bF071cfD8eD1AfABF639f72",
+      "txHash": "0x1b824c02c1c0277596f609ca7a90cba47f030f43c1341aa28ee7f16630328d57",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "vault",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "StratFeeManagerInitializable",
+            "src": "src/strategies/Common/StratFeeManagerInitializable.sol:21"
+          },
+          {
+            "label": "unirouter",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address",
+            "contract": "StratFeeManagerInitializable",
+            "src": "src/strategies/Common/StratFeeManagerInitializable.sol:22"
+          },
+          {
+            "label": "keeper",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_address",
+            "contract": "StratFeeManagerInitializable",
+            "src": "src/strategies/Common/StratFeeManagerInitializable.sol:23"
+          },
+          {
+            "label": "strategist",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_address",
+            "contract": "StratFeeManagerInitializable",
+            "src": "src/strategies/Common/StratFeeManagerInitializable.sol:24"
+          },
+          {
+            "label": "beefyFeeRecipient",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_address",
+            "contract": "StratFeeManagerInitializable",
+            "src": "src/strategies/Common/StratFeeManagerInitializable.sol:25"
+          },
+          {
+            "label": "beefyFeeConfig",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_contract(IFeeConfig)3118",
+            "contract": "StratFeeManagerInitializable",
+            "src": "src/strategies/Common/StratFeeManagerInitializable.sol:26"
+          },
+          {
+            "label": "withdrawalFee",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256",
+            "contract": "StratFeeManagerInitializable",
+            "src": "src/strategies/Common/StratFeeManagerInitializable.sol:31"
+          },
+          {
+            "label": "native",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_address",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:21"
+          },
+          {
+            "label": "output",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_address",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:22"
+          },
+          {
+            "label": "want",
+            "offset": 0,
+            "slot": "9",
+            "type": "t_address",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:23"
+          },
+          {
+            "label": "aToken",
+            "offset": 0,
+            "slot": "10",
+            "type": "t_address",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:24"
+          },
+          {
+            "label": "dataProvider",
+            "offset": 0,
+            "slot": "11",
+            "type": "t_address",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:27"
+          },
+          {
+            "label": "lendingPool",
+            "offset": 0,
+            "slot": "12",
+            "type": "t_address",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:28"
+          },
+          {
+            "label": "incentivesController",
+            "offset": 0,
+            "slot": "13",
+            "type": "t_address",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:29"
+          },
+          {
+            "label": "outputToNativePath",
+            "offset": 0,
+            "slot": "14",
+            "type": "t_bytes_storage",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:32"
+          },
+          {
+            "label": "nativeToWantPath",
+            "offset": 0,
+            "slot": "15",
+            "type": "t_bytes_storage",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:33"
+          },
+          {
+            "label": "harvestOnDeposit",
+            "offset": 0,
+            "slot": "16",
+            "type": "t_bool",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:35"
+          },
+          {
+            "label": "lastHarvest",
+            "offset": 0,
+            "slot": "17",
+            "type": "t_uint256",
+            "contract": "StrategyAaveArbUSDC",
+            "src": "src/strategies/Aave/StrategyAaveArbUSDC.sol:36"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)65_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)14_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(PausableStorage)138_storage": {
+            "label": "struct PausableUpgradeable.PausableStorage",
+            "members": [
+              {
+                "label": "_paused",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_bytes_storage": {
+            "label": "bytes",
+            "numberOfBytes": "32"
+          },
+          "t_contract(IFeeConfig)3118": {
+            "label": "contract IFeeConfig",
+            "numberOfBytes": "20"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Pausable": [
+            {
+              "contract": "PausableUpgradeable",
+              "label": "_paused",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol:21",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
             }
           ],
           "erc7201:openzeppelin.storage.Initializable": [

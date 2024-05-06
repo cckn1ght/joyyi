@@ -33,6 +33,7 @@ contract BeefyVaultV7 is UUPSUpgradeable, ERC20Upgradeable, OwnableUpgradeable, 
     event NewStratCandidate(address implementation);
     event UpgradeStrat(address implementation);
 
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
     /**
      * @dev Sets the value of {token} to the token that the vault will
      * hold as underlying value. It initializes the vault's own 'moo' token.
@@ -201,5 +202,4 @@ contract BeefyVaultV7 is UUPSUpgradeable, ERC20Upgradeable, OwnableUpgradeable, 
         IERC20(_token).safeTransfer(msg.sender, amount);
     }
 
-    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 }
